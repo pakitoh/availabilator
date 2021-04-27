@@ -134,8 +134,8 @@ docker run -it --rm --network host --env-file .env  web-availability-checke
 ```
 
 ## TODO
-Add integration and acceptance tests
-Add a CI pipeline
-Install TimescaleDB extension in PG
-Add a REST interface to be able to add at runtime watches on several sites running in the same service.
+- Add integration and acceptance tests
+- Add a CI pipeline
+- Install TimescaleDB extension in PG
+- Add a REST interface to be able to add at runtime watches on several sites running in the same service.
 
