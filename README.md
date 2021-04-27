@@ -30,12 +30,50 @@ For the database writer we expect to see a solution that
 
 ## Usage
 
-### How to build
-The project uses Apache Maven to build so a simple
+### Provisioning the infrastructure
+db-writer folder contains Terraform scripts to create and configure Kafka and Postgres in Aiven cloud. 
+You just need to create a file `secrets.tfvars` with needed secrets to connect to Aiven cloud. You can use the `secrets.tfvars.tmp` as a template.
+After that you just need to `terraform apply` as usual:
 ```
-mvn clean install
+$ ~/labs/availabilator > cd db-writer
+$ ~/labs/availabilator/db-writer > terraform --version
+Terraform v0.15.0
+on linux_amd64
+$ ~/labs/availabilator/db-writer > terraform init
+[...]
+$ ~/labs/availabilator/db-writer > terraform apply -var-file="secrets.tfvars"
+[...]
+```
+
+### Configure SSL to connect Aiven cloud
+You will need to download 
+- Access Key
+- Access Certificate
+- CA Certificate
+from Kafka service in Aiven console. 
+You can do this browsing manually to the web console or using avn cli like this:
+```
+avn service list my-kafka --json | jq -r '.[0].connection_info.kafka_access_cert' 
+```
+Download those 3 files ca.pem, service.cert and service.key to checker folder and run:
+
+```
+$ ~/labs/availabilator/checker > openssl pkcs12 -export -inkey service.key -in service.cert -out client.keystore.p12 -name service_key
+```
+to create the keystore and 
+```
+$ ~/labs/availabilator/checker > keytool -import -file ca.pem -alias CA -keystore client.truststore.jks 
+```
+to create the truststore.
+
+
+### How to build
+The project uses Apache Maven as build tool so a simple command
+```
+$ ~/labs/availabilator/checker > mvn clean install
 ```
 would compile the project
+
 
 ### How to run
 
@@ -44,15 +82,16 @@ The project has been configured to create a fatjar after a succesful build in
 ```
 target/web-availability-checker.jar
 ```
-so if you want to run it with default values you just need to
+so you can launch it with default values running
 ```
 java -jar $PATH_TO_TARGET_FOLDER/web-availability-checker.jar
 ```
-will start watching the default location (https://aiven.io)
-If you want to watch a different location you can pass it as first argument to the command
+and it will start watching the default location (https://aiven.io)
+If you want to watch a different location you can pass it as first argument to the java command
 ```
 java -jar $PATH_TO_TARGET_FOLDER/web-availability-checker.jar https://kafka.apache.org/
 ```
+You can use environment variables to configure the service.
 
 #### Docker
 There has been also provided a simple Dockerfile in case you want to run the project in a container.
@@ -71,37 +110,32 @@ docker run -it --rm --network host  web-availability-checker https://kafka.apach
 ```
 
 #### Configuration params
-You can tweak the behavior of the system using environment variables
-* "availabilator.rate" DEFAULT RATE = 5000
-* "availabilator.threadPoolSize" DEFAULT_POOL_SIZE = 2
-* "availabilator.initialDelay" DEFAULT_INITIAL_DELAY = 0
-* "availabilator.kafka.host" DEFAULT_KAFKA_HOST = "localhost"
-* "availabilator.kafka.port" DEFAULT_KAFKA_PORT = 9092
-
-so, for example,
+You can tweak the behavior of the system using environment variables like here
 ```
-docker run -it --rm --network host -e availabilator.rate=60000  web-availability-checker https://www.google.com
+docker run -it --rm --network host -e POOLING_RATE=60000  web-availability-checker https://www.google.com
 ```
-will start watching https://www.google.com every 60 secs
-
-
-### AIVEN
-
-Download:
-- Access Key
-- Access Certificate
-- CA Certificate
-from Aiven console 
-
+in this example the system will start watching https://www.google.com every 60 secs.
+We can also grouping several env vars in an .env file
+```
+POOLING_RATE=1000
+KAFKA_HOST=my-kafka-availabilator.aivencloud.com
+KAFKA_PORT=17701
+SSL_ENABLED=true
+TRUSTSTORE=client.truststore.jks
+TRUSTSTORE_PASS=secret
+KEYSTORE=client.keystore.p12
+KEYSTORE_PASS=secret
+KEY_PASS=secret
 
 ```
-docker run -it --rm --network host --env-file .env  web-availability-checker
+And the using with docker
+```
+docker run -it --rm --network host --env-file .env  web-availability-checke
 ```
 
-
-
-
-
-
-
+## TODO
+Add integration and acceptance tests
+Add a CI pipeline
+Install TimescaleDB extension in PG
+Add a REST interface to be able to add at runtime watches on several sites running in the same service.
 
