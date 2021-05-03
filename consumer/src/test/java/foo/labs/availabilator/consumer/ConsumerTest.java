@@ -183,8 +183,6 @@ public class ConsumerTest {
     }
 
     private ConsumerRecord<String, AvailabilatorRecord> buildConsumerRecord(AvailabilatorRecord availability) {
-        ConsumerRecord<String, AvailabilatorRecord> cr =
-                new ConsumerRecord<>(TOPIC, PARTITION, OFFSET, KEY, availability);
-        return cr;
+        return new ConsumerRecord<>(TOPIC, PARTITION, OFFSET, KEY, availability);
     }
 }

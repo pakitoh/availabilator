@@ -17,37 +17,44 @@ public class Writer {
             "(timestamp, address, \"responseTime\", \"statusCode\", matches) " +
             "VALUES (?, ?, ?, ?, ?) " +
             "ON CONFLICT DO NOTHING";
-    private final Logger logger = LoggerFactory.getLogger(Deserializer.class);
-    private Connection conn;
+    private static final Logger LOGGER = LoggerFactory.getLogger(Deserializer.class);
+
+    private String dbHost;
+    private String dbPort;
+    private String dbUser;
+    private String dbUserPass;
+    private String dbName;
     private String tableName;
+    private DbConnectionBuilder dbConnectionBuilder;
 
     public Writer(Map<String, String> ctx) {
         this(ctx, new DbConnectionBuilder());
     }
 
     public Writer(Map<String, String> ctx, DbConnectionBuilder dbConnectionBuilder) {
-        conn = dbConnectionBuilder.build(
-                ctx.get(ContextBuilder.DB_HOST),
-                ctx.get(ContextBuilder.DB_PORT),
-                ctx.get(ContextBuilder.DB_USER),
-                ctx.get(ContextBuilder.DB_USER_PASS),
-                ctx.get(ContextBuilder.DB_NAME));
+        dbHost = ctx.get(ContextBuilder.DB_HOST);
+        dbPort = ctx.get(ContextBuilder.DB_PORT);
+        dbUser = ctx.get(ContextBuilder.DB_USER);
+        dbUserPass = ctx.get(ContextBuilder.DB_USER_PASS);
+        dbName = ctx.get(ContextBuilder.DB_NAME);
         tableName = ctx.get(ContextBuilder.DB_TABLE_NAME);
+        this.dbConnectionBuilder = dbConnectionBuilder;
     }
 
-    public void store(AvailabilatorRecord availabity) {
-        try (PreparedStatement st = conn.prepareStatement(String.format(INSERT_TEMPLATE, tableName))) {
+    public void store(AvailabilatorRecord availability) {
+        try (Connection conn = dbConnectionBuilder.build(dbHost, dbPort, dbUser, dbUserPass, dbName);
+             PreparedStatement st = conn.prepareStatement(String.format(INSERT_TEMPLATE, tableName))) {
             st.setObject(1, LocalDateTime.ofInstant(
-                    Instant.ofEpochMilli(availabity.getTimestamp()),
+                    Instant.ofEpochMilli(availability.getTimestamp()),
                     ZoneOffset.UTC));
-            st.setString(2, availabity.getAddress());
-            st.setInt(3, availabity.getResponseTime());
-            st.setInt(4, availabity.getStatusCode());
-            st.setBoolean(5, availabity.matches());
+            st.setString(2, availability.getAddress());
+            st.setInt(3, availability.getResponseTime());
+            st.setInt(4, availability.getStatusCode());
+            st.setBoolean(5, availability.matches());
             int rowsUpdated = st.executeUpdate();
-            logger.trace(rowsUpdated + " rows updated");
-        } catch (SQLException e) {
-            logger.warn("Error inserting in DB: " + e.getMessage(), e);
+            LOGGER.trace(rowsUpdated + " rows updated");
+        } catch (SQLException | RuntimeException e) {
+            LOGGER.warn("Error storing availability in DB: " + e.getMessage(), e);
         }
     }
 }
