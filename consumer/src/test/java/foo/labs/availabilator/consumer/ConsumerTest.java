@@ -25,9 +25,6 @@ public class ConsumerTest {
 
     public static final String BOOTSTRAP_SERVERS = "host:port";
     public static final String CONSUMER_GROUP = "consumerGroupId";
-    public static final String KEY_DESERIALIZER = "KeyDeserializer.class";
-    public static final String VALUE_DESERIALIZER = "ValueDeserializer.class";
-    public static final String AUTO_COMMIT_ENABLED = "true";
     public static final String AUTO_COMMIT_INTERVAL = "250";
     public static final String POLLING_TIMEOUT = "500";
     public static final String SSL_ENABLED = "true";
@@ -49,9 +46,6 @@ public class ConsumerTest {
     Map<String, String> ctx = Map.ofEntries(
             Map.entry(ContextBuilder.BOOTSTRAP_SERVERS, BOOTSTRAP_SERVERS),
             Map.entry(ContextBuilder.CONSUMER_GROUP_ID, CONSUMER_GROUP),
-            Map.entry(ContextBuilder.KEY_DESERIALIZER, KEY_DESERIALIZER),
-            Map.entry(ContextBuilder.VALUE_DESERIALIZER, VALUE_DESERIALIZER),
-            Map.entry(ContextBuilder.AUTO_COMMIT, AUTO_COMMIT_ENABLED),
             Map.entry(ContextBuilder.AUTO_COMMIT_INTERVAL, AUTO_COMMIT_INTERVAL),
             Map.entry(ContextBuilder.POLLING_TIMEOUT, POLLING_TIMEOUT),
             Map.entry(ContextBuilder.SSL_ENABLED, SSL_ENABLED),
@@ -83,9 +77,6 @@ public class ConsumerTest {
         verify(kafkaConsumerBuilder).build(
                 BOOTSTRAP_SERVERS,
                 CONSUMER_GROUP,
-                KEY_DESERIALIZER,
-                VALUE_DESERIALIZER,
-                AUTO_COMMIT_ENABLED,
                 AUTO_COMMIT_INTERVAL,
                 SSL_ENABLED,
                 TRUSTSTORE,
@@ -101,9 +92,6 @@ public class ConsumerTest {
         when(kafkaConsumerBuilder.build(
                 BOOTSTRAP_SERVERS,
                 CONSUMER_GROUP,
-                KEY_DESERIALIZER,
-                VALUE_DESERIALIZER,
-                AUTO_COMMIT_ENABLED,
                 AUTO_COMMIT_INTERVAL,
                 SSL_ENABLED,
                 TRUSTSTORE,
@@ -131,9 +119,6 @@ public class ConsumerTest {
         when(kafkaConsumerBuilder.build(
                 BOOTSTRAP_SERVERS,
                 CONSUMER_GROUP,
-                KEY_DESERIALIZER,
-                VALUE_DESERIALIZER,
-                AUTO_COMMIT_ENABLED,
                 AUTO_COMMIT_INTERVAL,
                 SSL_ENABLED,
                 TRUSTSTORE,
@@ -155,9 +140,6 @@ public class ConsumerTest {
         when(kafkaConsumerBuilder.build(
                 BOOTSTRAP_SERVERS,
                 CONSUMER_GROUP,
-                KEY_DESERIALIZER,
-                VALUE_DESERIALIZER,
-                AUTO_COMMIT_ENABLED,
                 AUTO_COMMIT_INTERVAL,
                 SSL_ENABLED,
                 TRUSTSTORE,

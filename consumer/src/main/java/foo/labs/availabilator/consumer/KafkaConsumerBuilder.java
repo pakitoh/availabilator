@@ -19,13 +19,13 @@ public class KafkaConsumerBuilder {
     public static final String KEYSTORE_PASS_PROPERTY_NAME = "ssl.keystore.password";
     public static final String KEY_PASS_PROPERTY_NAME = "ssl.key.password";
     public static final String SSL = "SSL";
+    public static final String DEFAULT_KEY_DESERIALIZER = "org.apache.kafka.common.serialization.StringDeserializer";
+    public static final String DEFAULT_VALUE_DESERIALIZER = "org.apache.kafka.common.serialization.StringDeserializer";
+    public static final String AUTO_COMMIT_ENABLED = "true";
 
     public KafkaConsumer<String, AvailabilatorRecord> build(
         String bootstrapServers,
         String consumerGroupId,
-        String keyDeserializer,
-        String valueDeserializer,
-        String autoCommit,
         String autoCommitInterval,
         String ssl,
         String truststore,
@@ -38,9 +38,9 @@ public class KafkaConsumerBuilder {
         Properties props = new Properties();
         props.setProperty(BOOTSTRAP_SERVERS_PROPERTY_NAME, bootstrapServers);
         props.setProperty(CONSUMER_GROUP_PROPERTY_NAME, consumerGroupId);
-        props.setProperty(KEY_DESERIALIZER_PROPERTY_NAME, keyDeserializer);
-        props.setProperty(VALUE_DESERIALIZER_PROPERTY_NAME, valueDeserializer);
-        props.setProperty(AUTO_COMMIT_PROPERTY_NAME, autoCommit);
+        props.setProperty(KEY_DESERIALIZER_PROPERTY_NAME, DEFAULT_KEY_DESERIALIZER);
+        props.setProperty(VALUE_DESERIALIZER_PROPERTY_NAME, DEFAULT_VALUE_DESERIALIZER);
+        props.setProperty(AUTO_COMMIT_PROPERTY_NAME, AUTO_COMMIT_ENABLED);
         props.setProperty(AUTO_COMMIT_INTERVAL_PROPERTY_NAME, autoCommitInterval);
         if("true".equals(ssl)) {
             props.setProperty(SECURITY_PROTOCOL_PROPERTY_NAME, SSL);

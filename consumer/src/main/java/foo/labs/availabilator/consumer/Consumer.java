@@ -22,9 +22,6 @@ public class Consumer {
         this.kafkaConsumer = kafkaConsumerBuilder.build(
                 ctx.get(ContextBuilder.BOOTSTRAP_SERVERS),
                 ctx.get(ContextBuilder.CONSUMER_GROUP_ID),
-                ctx.get(ContextBuilder.KEY_DESERIALIZER),
-                ctx.get(ContextBuilder.VALUE_DESERIALIZER),
-                ctx.get(ContextBuilder.AUTO_COMMIT),
                 ctx.get(ContextBuilder.AUTO_COMMIT_INTERVAL),
                 ctx.get(ContextBuilder.SSL_ENABLED),
                 ctx.get(ContextBuilder.TRUSTSTORE),
