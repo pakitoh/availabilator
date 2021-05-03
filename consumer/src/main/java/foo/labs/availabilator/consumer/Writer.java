@@ -15,7 +15,8 @@ public class Writer {
 
     public static final String INSERT_TEMPLATE = "INSERT INTO %s " +
             "(timestamp, address, \"responseTime\", \"statusCode\", matches) " +
-            "VALUES (?, ?, ?, ?, ?)";
+            "VALUES (?, ?, ?, ?, ?) " +
+            "ON CONFLICT DO NOTHING";
     private final Logger logger = LoggerFactory.getLogger(Deserializer.class);
     private Connection conn;
     private String tableName;
